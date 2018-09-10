@@ -41,18 +41,13 @@ for c in cnts:
 	
 	peri = cv2.arcLength(c, True)
 	approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-        print(len(approx))
-
 
 	if len(approx) == 4:
-		screenCnt = approx     
+		screenCnt = approx
 		break
-        
-            
 
 
 print("STEP 2: Find contours of paper")
-
 cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
 cv2.imshow("Outline", image)
 cv2.waitKey(0)
