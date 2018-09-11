@@ -1,3 +1,4 @@
+#usage : python scanOCR.py --image images/rs.JPG
 from pyimagesearch.transform import four_point_transform
 from skimage.filters import threshold_local
 import numpy as np
@@ -35,24 +36,20 @@ cv2.destroyAllWindows()
 
 cnts = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 cnts = cnts[0] if imutils.is_cv2() else cnts[1]
-cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
+cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:1]
 
 for c in cnts:
 	
 	peri = cv2.arcLength(c, True)
 	approx = cv2.approxPolyDP(c, 0.02 * peri, True)
 
-	if len(approx) == 4:
-		screenCnt = approx
-		break
-
 
 print("STEP 2: Find contours of paper")
-cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
+cv2.drawContours(image, [approx], -1, (0, 255, 0), 2)
 cv2.imshow("Outline", image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
+warped = four_point_transform(orig, approx.reshape(4, 2) * ratio)
 
 
 # convert the warped image to grayscale, then threshold it
