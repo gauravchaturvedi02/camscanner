@@ -107,7 +107,7 @@ final_im = cv2.medianBlur(warped, 3)
 print("STEP 3: Apply perspective transform")
 #cv2.imshow("Original", imutils.resize(orig, height = 650))
 cv2.imshow("Scanned", imutils.resize(final_im, height = 650))
-cv2.imwrite("images/test.jpg", imutils.resize(warped, height = 650))
+cv2.imwrite("images/test.jpg", imutils.resize(final_im, height = 650))
 
 
 print("Step 4: Extracting the text")
@@ -116,7 +116,7 @@ text = pytesseract.image_to_string(final_im)
 print(text)
 
 # show the output images
-# cv2.imshow("Image", image)
+cv2.imshow("Image", image)
 cv2.imshow("Output", gray)
 cv2.waitKey(0)
 

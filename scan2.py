@@ -31,13 +31,15 @@ cnts = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 cnts = cnts[0] if imutils.is_cv2() else cnts[1]
 cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
 
-
+#screenCnt=[]
+print len(cnts);
 for c in cnts:
-	
+	#print c
 	peri = cv2.arcLength(c, True)
 	approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-
-	if len(approx) == 4:
+	print approx
+	if len(approx)>= 4:
+		print approx
 		screenCnt = approx
 		break
 
