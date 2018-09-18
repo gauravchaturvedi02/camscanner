@@ -8,6 +8,8 @@ import cv2
 import imutils
 import histogram as h
 import cumulative_histogram as ch
+import pytesseract
+from PIL import Image
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required = True,
@@ -37,9 +39,8 @@ for c in cnts:
 	#print c
 	peri = cv2.arcLength(c, True)
 	approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-	print approx
+	
 	if len(approx)>= 4:
-		print approx
 		screenCnt = approx
 		break
 
@@ -51,7 +52,10 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 
-warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
+if len(screenCnt)==4:
+    warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
+else:
+    warped = orig
 
 
 # convert the warped image to grayscale, then threshold it
@@ -105,4 +109,30 @@ print("STEP 3: Apply perspective transform")
 cv2.imshow("Original", imutils.resize(orig, height = 650))
 cv2.imshow("Scanned", imutils.resize(warped, height = 650))
 cv2.imwrite("images/test.jpg", imutils.resize(warped, height = 650))
-cv2.waitKey(0)
+
+
+print("Step 4: Applying dilation and erosion for removing noise") 
+kernel = np.ones((1, 1), np.uint8)
+img = cv2.dilate(warped, kernel, iterations=1)
+img = cv2.erode(warped, kernel, iterations=1)
+
+    # Write image after removed noise
+
+cv2.imwrite("images/removed_noise.png", img)
+
+   
+
+    #  Apply threshold to get image with only black and white
+print("Step 5: Binarization of image")
+img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)
+
+    # Write the image after apply opencv to do some ...
+cv2.imwrite("images/thres.png", img)
+
+print("Step 6:Recognize text with tesseract for python")
+
+result = pytesseract.image_to_string(Image.open("images/thres.png"))
+
+
+
+
